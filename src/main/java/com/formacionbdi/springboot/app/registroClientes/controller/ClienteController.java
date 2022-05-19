@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.formacionbdi.springboot.app.registroClientes.dto.ClienteRequestDto;
+import com.formacionbdi.springboot.app.registroClientes.dto.ClienteResponseDto;
 import com.formacionbdi.springboot.app.registroClientes.model.entity.Cliente;
 import com.formacionbdi.springboot.app.registroClientes.model.service.IClienteService;
 
@@ -33,7 +35,7 @@ public class ClienteController {
 		return clienteService.findAll();
 	}
 	
-	@GetMapping("/ver/{id}")
+	@GetMapping("/viewClient/{id}")
 	public ResponseEntity<?> detalle(@PathVariable Long id) { 
 		response = new HashMap<>();
 		Cliente cliente = clienteService.findBayId(id);
@@ -48,37 +50,58 @@ public class ClienteController {
 	}
 	
 	@PostMapping("/save")
-	public ResponseEntity<?> save(@RequestBody Cliente cliente) {
+	public ResponseEntity<?> save(@RequestBody ClienteRequestDto clienteRequest) {
 		response = new HashMap<>();
 		try{
+			Cliente cliente = new Cliente();
+			cliente.setAddressHome(clienteRequest.getAddressHome());
+			cliente.setBender(clienteRequest.getBender());
+			cliente.setBirthday(clienteRequest.getBirthday());
+			cliente.setCellPhone(clienteRequest.getCellPhone());
+			cliente.setFirstName(clienteRequest.getFirstName());
+			cliente.setHomePhone(clienteRequest.getHomePhone());
+			cliente.setIncomes(clienteRequest.getIncomes());
+			cliente.setLastName(clienteRequest.getLastName());
+			cliente.setProfession(clienteRequest.getProfession());
+			
 			clienteService.save(cliente).getId();
 			response.put("Mesanje","Creación exitosa de empleado con Id: ".concat(cliente.getId().toString()));
-			
+			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		}catch (DataAccessException e){
 			response.put("Mesanje","Ocurrio un error al crear al empleado ");
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 	
-	@PutMapping("/update")
-	public ResponseEntity<?> update(@RequestBody Cliente cliente) {
+	@PutMapping("/update/{id}")
+	public ResponseEntity<?> update(@RequestBody ClienteResponseDto clienteResponse,@PathVariable Long id) {
 		response = new HashMap<>();
-		Cliente client = clienteService.findBayId(cliente.getId());	
-		
+		Cliente cliente = new Cliente();	
 		try {
-			if (client != null) {
+			
+			if (clienteService.findBayId(id) != null) {
+				cliente = clienteService.findBayId(id);
+				
+				cliente.setAddressHome(clienteResponse.getAddressHome());
+				cliente.setBender(clienteResponse.getBender());
+				cliente.setBirthday(clienteResponse.getBirthday());
+				cliente.setCellPhone(clienteResponse.getCellPhone());
+				cliente.setFirstName(clienteResponse.getFirstName());
+				cliente.setHomePhone(clienteResponse.getHomePhone());
+				cliente.setIncomes(clienteResponse.getIncomes());
+				cliente.setLastName(clienteResponse.getLastName());
+				cliente.setProfession(clienteResponse.getProfession());
+				
 				clienteService.save(cliente);
 				response.put("Mesanje","Actualización exitosa de empleado con Id: ".concat(cliente.getId().toString()));
 				return new ResponseEntity<>(response, HttpStatus.OK);
 
 			}else {
-				response.put("Mesanje","No se encontro el empleado con Id: ".concat(cliente.getId().toString()));
+				response.put("Mesanje","No se encontro el empleado con Id: ".concat(id.toString()));
 				return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
 			}
 		}catch (DataAccessException e){
-			response.put("Mesanje","Ocurrio un error al actualizar al empleado con Id: ".concat(cliente.getId().toString()));
+			response.put("Mesanje","Ocurrio un error al actualizar al empleado con Id: ".concat(id.toString()));
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
