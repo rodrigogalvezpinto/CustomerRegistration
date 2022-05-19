@@ -15,7 +15,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.formacionbdi.springboot.app.registroClientes.dto.ClienteRequestDto;
-import com.formacionbdi.springboot.app.registroClientes.dto.ClienteResponseDto;
 import com.formacionbdi.springboot.app.registroClientes.model.entity.Cliente;
 import com.formacionbdi.springboot.app.registroClientes.model.service.IClienteService;
 
