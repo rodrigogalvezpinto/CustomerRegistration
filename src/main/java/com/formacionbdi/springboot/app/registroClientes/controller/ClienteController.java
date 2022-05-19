@@ -52,20 +52,9 @@ public class ClienteController {
 	@PostMapping("/save")
 	public ResponseEntity<?> save(@RequestBody ClienteRequestDto clienteRequest) {
 		response = new HashMap<>();
-		try{
-			Cliente cliente = new Cliente();
-			cliente.setAddressHome(clienteRequest.getAddressHome());
-			cliente.setBender(clienteRequest.getBender());
-			cliente.setBirthday(clienteRequest.getBirthday());
-			cliente.setCellPhone(clienteRequest.getCellPhone());
-			cliente.setFirstName(clienteRequest.getFirstName());
-			cliente.setHomePhone(clienteRequest.getHomePhone());
-			cliente.setIncomes(clienteRequest.getIncomes());
-			cliente.setLastName(clienteRequest.getLastName());
-			cliente.setProfession(clienteRequest.getProfession());
-			
-			clienteService.save(cliente).getId();
-			response.put("Mesanje","Creación exitosa de empleado con Id: ".concat(cliente.getId().toString()));
+		try{		
+			Long id = clienteService.save(clienteService.setterClient(clienteRequest)).getId();
+			response.put("Mesanje","Creación exitosa de empleado con Id: ".concat(id.toString()));
 			return new ResponseEntity<>(response, HttpStatus.CREATED);
 		}catch (DataAccessException e){
 			response.put("Mesanje","Ocurrio un error al crear al empleado ");
@@ -74,24 +63,18 @@ public class ClienteController {
     }
 	
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> update(@RequestBody ClienteResponseDto clienteResponse,@PathVariable Long id) {
+	public ResponseEntity<?> update(@RequestBody ClienteRequestDto clienteRequest,@PathVariable Long id) {
 		response = new HashMap<>();
 		Cliente cliente = new Cliente();	
 		try {
 			
 			if (clienteService.findBayId(id) != null) {
 				cliente = clienteService.findBayId(id);
+				Long idCliente = cliente.getId();
 				
-				cliente.setAddressHome(clienteResponse.getAddressHome());
-				cliente.setBender(clienteResponse.getBender());
-				cliente.setBirthday(clienteResponse.getBirthday());
-				cliente.setCellPhone(clienteResponse.getCellPhone());
-				cliente.setFirstName(clienteResponse.getFirstName());
-				cliente.setHomePhone(clienteResponse.getHomePhone());
-				cliente.setIncomes(clienteResponse.getIncomes());
-				cliente.setLastName(clienteResponse.getLastName());
-				cliente.setProfession(clienteResponse.getProfession());
+				cliente = clienteService.setterClient(clienteRequest);
 				
+				cliente.setId(idCliente);
 				clienteService.save(cliente);
 				response.put("Mesanje","Actualización exitosa de empleado con Id: ".concat(cliente.getId().toString()));
 				return new ResponseEntity<>(response, HttpStatus.OK);
