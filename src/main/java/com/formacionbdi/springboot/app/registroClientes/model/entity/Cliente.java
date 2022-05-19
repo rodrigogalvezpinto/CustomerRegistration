@@ -12,6 +12,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 @Table(name = "cliente")
@@ -56,17 +58,17 @@ public class Cliente implements Serializable{
 		this.incomes = incomes;
 	}
 
-
+	
 	public Long getId() {
 		return id;
 	}
 
-
+	
 	public void setId(Long id) {
 		this.id = id;
 	}
 
-
+	
 	public String getFirstName() {
 		return firstName;
 	}
